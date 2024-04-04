@@ -1,0 +1,128 @@
+# This workflow will deploy a PowerShell project to an Azure Functions App on Windows or Linux when a commit is pushed to your default branch.
+#
+# This workflow assumes you have already created the target Azure Functions app.
+# For instructions see https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-powershell
+#
+# To configure this workflow:
+# 1. Set up the following secrets in your repository:
+#   - AZURE_FUNCTIONAPP_PUBLISH_PROFILE
+# 2. Change env variables for your configuration.
+#
+# For more information on:
+#   - GitHub Actions for Azure: https://github.com/Azure/Actions
+#   - Azure Functions Action: https://github.com/Azure/functions-action
+#   - Publish Profile: https://github.com/Azure/functions-action#using-publish-profile-as-deployment-credential-recommended
+#   - Azure Service Principal for RBAC: https://github.com/Azure/functions-action#using-azure-service-principal-for-rbac-as-deployment-credential
+#
+# For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples/tree/master/FunctionApp
+
+name: Deploy PowerShell project to Azure Function App
+
+on:
+  push:
+    branches: ["master"]
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'your-app-name'   # set this to your function app name on Azure
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest # For Linux, use ubuntu-latest
+    environment: dev
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    # If you want to use Azure RBAC instead of Publish Profile, then uncomment the task below
+    # - name: 'Login via Azure CLI'
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }} # set up AZURE_RBAC_CREDENTIALS secrets in your repository
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} # Remove publish-profile to use Azure RBAC
+              - name: Try in Web IDE
+                uses: redhat-actions/try-in-web-ide@v1.4.1
+                       - name: Knative Service Manager
+  # You may pin to the exact commit or the version.
+  # uses: redhat-actions/kn-service-manager@9d456952c2b59c36db2bb2b83adfa983b1c787a4
+  uses: redhat-actions/kn-service-manager@v1
+  with:
+    # The Knative Service Name
+    service_name: 
+    # The Kubernetes Namespace to deploy to. Defaults to current context's namespace.
+    namespace: # optional
+    # The Knative service command, accepted commands are create, update, apply and delete
+    command: # optional, default is create
+    # The Knative Service Image
+    container_image: 
+    # Any extra arguments to append to the kn <command>
+    kn_extra_args: # optional
+    # The registry user to use to create the image pull secret
+    registry_user: # optional
+    # The registry user password
+    registry_password: # optional
+    # "Pass --force to kn create. If the service already exists,
+the service will be replaced, instead of kn create failing.
+This input has no effect if command is not create"
+
+    force_create: # optional, default is false
+                       - name: StackQL Studios - Setup StackQL
+  # You may pin to the exact commit or the version.
+  # uses: stackql/setup-stackql@b16e37899bd7a0f0cfb346f1df4ea7123b32961a
+  uses: stackql/setup-stackql@v2.0.0
+  with:
+    # Whether or not to install a wrapper to wrap subsequent calls of the `stackql` binary and expose its STDOUT, STDERR, and exit code as outputs named `stdout`, `stderr`, and `exitcode` respectively. Defaults to `true`.
+    use_wrapper: # optional, default is false
+                      - name: Deploy static site to AWS (S3+CDN+R53)
+  # You may pin to the exact commit or the version.
+  # uses: bitovi/github-actions-deploy-static-site-to-aws@83cb7178601398d463bf523241a32f9a79b7feb5
+  uses: bitovi/github-actions-deploy-static-site-to-aws@v0.2.0
+  with:
+    # Specifies if this action should checkout the code
+    checkout: # optional, default is true
+    # AWS access key ID
+    aws_access_key_id: 
+    # AWS secret access key
+    aws_secret_access_key: 
+    # AWS default region
+    aws_default_region: # optional, default is us-east-1
+    # AWS Role to assume.
+    aws_role_to_assume: # optional
+    # Set to override the AWS resource identifier for the deployment.  Defaults to `${org}-{repo}-{branch}`.  Use with destroy to destroy specific resources.
+    aws_resource_identifier: # optional
+    # A JSON object of additional tags that will be included on created resources. Example: `{"key1": "value1", "key2": "value2"}`
+    aws_additional_tags: # optional
+    # 
+    tf_action: # optional
+    # AWS S3 bucket to use for Terraform state. Defaults to `${org}-${repo}-{branch}-tf-state`
+    tf_state_bucket: # optional
+    # Force purge and deletion of S3 bucket defined if terraform destroy action succeded.
+    tf_state_bucket_destroy: # optional
+    # Source folder for files to be published. Will ignore any hidden file. Defaults to root folder of the calling repo if nothing defined.
+    aws_site_source_folder: 
+    # Root object to be served as entry-point. Defaults to `index.html`
+    aws_site_root_object: # optional
+    #  AWS S3 bucket name to use for the public files. Defaults to `${org}-${repo}-{branch}-sp`
+    aws_site_bucket_name: # optional
+    # Enable or disables the use of CDN. Defaults to `false`.
+    aws_site_cdn_enabled: # optional
+    # Define the root domain name for the application. e.g. `bitovi.com`
+    aws_r53_domain_name: # optional
+    # Define the sub-domain part of the URL. Defaults to `${GITHUB_ORG_NAME}-${GITHUB_REPO_NAME}-${GITHUB_BRANCH_NAME}`.
+    aws_r53_sub_domain_name: # optional
+    # Deploy application to root domain. Will create root and www records. Default is `false`.
+    aws_r53_root_domain_deploy: # optional
+    # Define the certificate ARN to use for the application.'
+    aws_r53_cert_arn: # optional
+    # Generates and manage the root cert for the application. Default is `false`.
+    aws_r53_create_root_cert: # optional
+    # Generates and manage the sub-domain certificate for the application. Default is `false`.
+    aws_r53_create_sub_cert: # optional
+          
